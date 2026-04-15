@@ -5,6 +5,7 @@
   "iot_class": "cloud_polling",
   "requirements": ["energa-outages-api>=0.2.0"],
   "version": "0.1.0",
+  "codeowners": ["@vincentto13"],
   "documentation": "https://github.com/vincentto13/hass-energa-outages",
   "issue_tracker": "https://github.com/vincentto13/hass-energa-outages/issues"
 }

@@ -1,5 +1,10 @@
 # Energa Outages — Home Assistant Integration
 
+[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/release/vincentto13/hass-energa-outages.svg)](https://github.com/vincentto13/hass-energa-outages/releases)
+[![HACS Validation](https://github.com/vincentto13/hass-energa-outages/actions/workflows/validate.yaml/badge.svg)](https://github.com/vincentto13/hass-energa-outages/actions/workflows/validate.yaml)
+[![Hassfest](https://github.com/vincentto13/hass-energa-outages/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/vincentto13/hass-energa-outages/actions/workflows/hassfest.yaml)
+
 A custom Home Assistant integration that monitors [Energa Operator](https://energa-operator.pl) power outages for your configured zones.
 
 ## Features
@@ -18,10 +23,14 @@ A custom Home Assistant integration that monitors [Energa Operator](https://ener
 
 ### HACS (recommended)
 
-1. Open HACS → Integrations → ⋮ → Custom repositories
+[![Add to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=vincentto13&repository=hass-energa-outages&category=integration)
+
+1. Click the button above or open HACS → Integrations → ⋮ → Custom repositories
 2. Add `https://github.com/vincentto13/hass-energa-outages` as type **Integration**
 3. Install "Energa Outages" → restart Home Assistant
-4. Go to **Settings → Devices & Services → Add Integration → Energa Outages**
+4. Then add the integration:
+
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=energa_outages)
 
 ### Manual
 
