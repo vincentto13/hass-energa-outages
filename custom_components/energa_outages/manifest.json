@@ -1,11 +1,11 @@
 {
   "domain": "energa_outages",
   "name": "Energa Outages",
-  "config_flow": true,
-  "iot_class": "cloud_polling",
-  "requirements": ["energa-outages-api>=0.2.0"],
-  "version": "0.1.0",
   "codeowners": ["@vincentto13"],
+  "config_flow": true,
   "documentation": "https://github.com/vincentto13/hass-energa-outages",
-  "issue_tracker": "https://github.com/vincentto13/hass-energa-outages/issues"
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/vincentto13/hass-energa-outages/issues",
+  "requirements": ["energa-outages-api>=0.2.0"],
+  "version": "0.1.0"
 }
