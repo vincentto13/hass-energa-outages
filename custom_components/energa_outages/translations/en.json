@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Energa Outages",
+        "description": "Select the Home Assistant zones to monitor for power outages.",
+        "data": {
+          "zones": "Zones to monitor",
+          "scan_interval": "Polling interval (seconds)",
+          "planned_window_days": "Look-ahead window for planned outages (days)"
+        }
+      }
+    },
+    "error": {
+      "no_zones_selected": "Please select at least one zone."
+    },
+    "abort": {
+      "already_configured": "This combination of zones is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Energa Outages options",
+        "data": {
+          "zones": "Zones to monitor",
+          "scan_interval": "Polling interval (seconds)",
+          "planned_window_days": "Look-ahead window for planned outages (days)"
+        }
+      }
+    },
+    "error": {
+      "no_zones_selected": "Please select at least one zone."
+    }
+  }
+}
