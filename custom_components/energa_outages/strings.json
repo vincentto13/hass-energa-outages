@@ -34,11 +34,12 @@
     }
   },
   "entity": {
-    "binary_sensor": {
+    "sensor": {
       "energa_outages": {
         "state": {
-          "on": "Outage detected",
-          "off": "No outage"
+          "active": "Active",
+          "planned": "Planned",
+          "none": "None"
         }
       }
     }

@@ -11,9 +11,8 @@ A custom Home Assistant integration that monitors [Energa Operator](https://ener
 
 - Monitors one or more HA zones for scheduled or unplanned power outages
 - Uses zone GPS coordinates and radius as the search area
-- **Binary sensor** per zone: `ON` = active outage right now, `OFF` = no current outage
-- **Timestamp sensor** per zone: shows when the next outage starts (active or planned)
-- Detects **planned outages** up to N days ahead (default 7 days) via `planned_outages` attribute
+- **Enum sensor** per zone with states: `active` / `planned` / `none`
+- Detects **planned outages** up to N days ahead (default 7 days)
 - Configurable polling interval (default: 5 minutes)
 - Backed by [energa-outages-api](https://github.com/vincentto13/energa-outages-api) PyPI package
 
@@ -51,55 +50,35 @@ To update zones or settings later: **Settings → Devices & Services → Energa 
 
 ## Entities
 
-For each configured zone the integration creates two entities.
+For each configured zone the integration creates one entity.
 
-### Binary sensor — `binary_sensor.energa_outages_<zone>`
+### Sensor — `sensor.energa_outages_<zone>`
 
-| State | Meaning |
-|---|---|
-| `on` | Active outage affecting the zone right now |
-| `off` | No current outage (check `planned_outages` for upcoming ones) |
+| State | Icon | Meaning |
+|---|---|---|
+| `active` | `mdi:flash-alert` | Outage is happening right now |
+| `planned` | `mdi:flash-triangle` | Outage planned within the look-ahead window |
+| `none` | `mdi:flash` | No outage detected |
 
-**Attributes when `on` (active outage):**
+**Attributes (present when state is `active` or `planned`):**
 
 | Attribute | Description |
 |---|---|
-| `outage_status` | `"active"` |
 | `confidence` | `1.0` = zone centre inside polygon; `<1.0` = within zone radius of boundary |
 | `is_inside` | `true` if zone centre is inside the outage polygon |
 | `distance_to_boundary_m` | Distance to nearest polygon edge in metres (0 if inside) |
 | `outage_guid` | Unique outage identifier |
-| `start_date` / `end_date` | Outage time window (ISO 8601, UTC) |
-| `region` / `department` | Energa region and department |
 | `shutdown_type` | `"planned"` or `"emergency"` |
+| `start_date` / `end_date` | Outage time window (ISO 8601, UTC) |
+| `next_outage_start` | Start of the next outage time window (ISO 8601, UTC) |
+| `region` / `department` | Energa region and department |
 | `message` | Raw affected address list from Energa |
 
-**Attribute always present when upcoming outages exist:**
+**Always present:**
 
 | Attribute | Description |
 |---|---|
-| `planned_outages` | List of upcoming outages within the look-ahead window (see example below) |
-
----
-
-### Timestamp sensor — `sensor.energa_outages_<zone>_next_outage`
-
-Shows the start time of the next outage (active or planned). Useful for automations like "notify me 1 hour before a planned outage".
-
-| State | Meaning |
-|---|---|
-| ISO 8601 datetime | Start time of next outage |
-| `unavailable` | No outage in the look-ahead window |
-
-**Attributes:**
-
-| Attribute | Description |
-|---|---|
-| `outage_status` | `"active"` or `"planned"` |
-| `end_date` | When the outage ends |
-| `shutdown_type` | `"planned"` or `"emergency"` |
-| `message` | Raw affected address list |
-| `planned_count` | Total number of planned outages in the window (only when `planned`) |
+| `planned_outages` | Full list of upcoming outages within look-ahead window (empty list if none) |
 
 ---
 
@@ -107,36 +86,34 @@ Shows the start time of the next outage (active or planned). Useful for automati
 
 Zone `qwe` centred at `53.6336 N, 17.4372 E` with radius 500 m, no active outage but one upcoming:
 
-**`binary_sensor.energa_outages_qwe`** — `off`
+**`sensor.energa_outages_qwe`** — `planned`
 ```yaml
-planned_outages:
-  - guid: 9e379372-ea6a-4aa4-ab82-aa4dda854223
-    start_date: "2026-04-15T06:30:00+00:00"
-    end_date: "2026-04-15T11:30:00+00:00"
-    confidence: 1.0
-    is_inside: true
-    shutdown_type: emergency
-    region: Człuchów
-    message: >-
-      Jęczniki Wielkie ulica Makowa 8, 11, 23/13 1, 1a, 2, 2/A, 3, od 7 do 9,
-      9/A, od 10 do 12, 12/A, 14, 14A, 40, 23/12, 23/15, 23/20, 23/23, 23/26,
-      23/28, Jęczniki Wielkie-107/1 (GPO) (MDZ), Jęczniki Wielkie-36/3 (GPO)
-      (MDZ), Jęczniki-23/1 (GPO), Jęczniki-37/4 (GPO).
-device_class: power
-```
-
-**`sensor.energa_outages_qwe_next_outage`** — `2026-04-15T06:30:00+00:00`
-```yaml
-outage_status: planned
-end_date: "2026-04-15T11:30:00+00:00"
+confidence: 1.0
+is_inside: true
+distance_to_boundary_m: 0
+outage_guid: 9e379372-ea6a-4aa4-ab82-aa4dda854223
 shutdown_type: emergency
-planned_count: 1
+start_date: "2026-04-15T06:30:00+00:00"
+end_date: "2026-04-15T11:30:00+00:00"
+next_outage_start: "2026-04-15T06:30:00+00:00"
+region: Człuchów
+department: Słupsk
 message: >-
   Jęczniki Wielkie ulica Makowa 8, 11, 23/13 1, 1a, 2, 2/A, 3, od 7 do 9,
   9/A, od 10 do 12, 12/A, 14, 14A, 40, 23/12, 23/15, 23/20, 23/23, 23/26,
   23/28, Jęczniki Wielkie-107/1 (GPO) (MDZ), Jęczniki Wielkie-36/3 (GPO)
   (MDZ), Jęczniki-23/1 (GPO), Jęczniki-37/4 (GPO).
-device_class: timestamp
+planned_outages:
+  - guid: 9e379372-ea6a-4aa4-ab82-aa4dda854223
+    start_date: "2026-04-15T06:30:00+00:00"
+    end_date: "2026-04-15T11:30:00+00:00"
+    next_outage_start: "2026-04-15T06:30:00+00:00"
+    confidence: 1.0
+    is_inside: true
+    shutdown_type: emergency
+    region: Człuchów
+    message: Jęczniki Wielkie ulica Makowa 8, 11 ...
+device_class: enum
 ```
 
 **`zone.qwe`** (source zone):
@@ -152,10 +129,10 @@ radius: 500
 
 1. On each poll cycle the integration fetches the Energa Operator outage feed (one HTTP request, result cached)
 2. For each configured zone it reads `latitude`, `longitude`, and `radius` from HA zone state
-3. It checks whether the zone is affected by any **currently active** outage (point-in-polygon + margin)
-4. It also scans for **upcoming outages** within the configured look-ahead window
-5. Binary sensor turns `on` only for active outages; planned outages appear in `planned_outages` attribute
-6. Timestamp sensor always points to the nearest outage start, active or planned
+3. It checks whether the zone is affected by any **currently active** outage (point-in-polygon + margin) → state `active`
+4. It also scans for **upcoming outages** within the configured look-ahead window → state `planned`
+5. If neither matches → state `none`
+6. The `planned_outages` attribute is always populated with the full list of upcoming matches
 
 ---
 
@@ -168,16 +145,16 @@ automation:
   trigger:
     - platform: template
       value_template: >
-        {{ states('sensor.energa_outages_home_next_outage') != 'unavailable'
-           and state_attr('sensor.energa_outages_home_next_outage', 'outage_status') == 'planned'
-           and (as_timestamp(states('sensor.energa_outages_home_next_outage')) - as_timestamp(now())) < 1800 }}
+        {{ states('sensor.energa_outages_home') == 'planned'
+           and state_attr('sensor.energa_outages_home', 'next_outage_start') is not none
+           and (as_timestamp(state_attr('sensor.energa_outages_home', 'next_outage_start')) - as_timestamp(now())) < 1800 }}
   action:
     - service: notify.mobile_app
       data:
         title: "Planned power outage soon"
         message: >
-          Outage starts at {{ states('sensor.energa_outages_home_next_outage') }}.
-          {{ state_attr('sensor.energa_outages_home_next_outage', 'message') }}
+          Outage starts at {{ state_attr('sensor.energa_outages_home', 'next_outage_start') }}.
+          {{ state_attr('sensor.energa_outages_home', 'message') }}
 ```
 
 ---

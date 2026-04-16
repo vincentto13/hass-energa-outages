@@ -14,7 +14,7 @@ from .const import (
 )
 from .coordinator import EnergaOutagesCoordinator
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

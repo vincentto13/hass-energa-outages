@@ -32,5 +32,16 @@
     "error": {
       "no_zones_selected": "Please select at least one zone."
     }
+  },
+  "entity": {
+    "sensor": {
+      "energa_outages": {
+        "state": {
+          "active": "Active",
+          "planned": "Planned",
+          "none": "None"
+        }
+      }
+    }
   }
 }
